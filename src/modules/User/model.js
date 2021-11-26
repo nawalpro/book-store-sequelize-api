@@ -1,5 +1,6 @@
-import { DataTypes, Model } from "sequelize/types";
+import { DataTypes, Model } from "sequelize";
 import db from "../../config/database";
+
 class User extends Model {
     static init(sequelize) {
         return super.init(
@@ -10,11 +11,6 @@ class User extends Model {
                       allowNull: false,
                       primaryKey: true
                   },
-
-                // id: {
-                //   type: DataTypes.INTEGER,
-                //   primaryKey: true,
-                //   autoIncrement: true },
                 first_name: DataTypes.STRING,
                 last_name: DataTypes.STRING,
                 email: DataTypes.STRING,
@@ -32,3 +28,7 @@ class User extends Model {
     }
 
 }
+
+User.init(db.sequelize);
+
+export default User;
