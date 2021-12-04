@@ -1,11 +1,14 @@
-import { Router } from 'express';
-import UserController from './controller';
+import { Router } from "express";
+import UserController from "./controller";
+import User from "./model";
 
 const UserRouter = Router();
+const entrypoint = '/users';
 
-UserRouter
-    .route('/users');
-UserRouter.post(UserController.register);
-// UserRouter.route('/users/auth').post(UserController.login);
+UserRouter.route(`${entrypoint}`)
+    .post(UserController.register)
+    .get(UserController.getAll);
 
 export default UserRouter;
+
+

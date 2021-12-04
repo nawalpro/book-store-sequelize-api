@@ -1,28 +1,28 @@
-class Server {
-  #http;
-  constructor(http) {
-    this.#http = http;
-  }
-  middlewares(middlewares) {
-    for (const key in middlewares) {
-        this.#http.use(middlewares[key]);
-    }
-  }
+import { handleError } from '../helpers/ApiError';
 
-  routes(routes) {
-    for (const path in routes) {
-        this.#http.use(path, routes[path]);
-    }
-  }
+const Server = (http, middlewares, routes) => {
+    const app = http();
+    const initializeMiddlewares = (middlewares) => {
+        for (const key in middlewares) {
+            const mware = middlewares[key];
+            app.use(mware);
+        }
+    };
+    const initializeApplicationRouter = (routes) => {
+        app.use(routes);
+        // app.use(handleError);
+    };
 
-  errorHandler(errorHandler) {
-    this.#http.use(errorHandler);
-  }
+    initializeMiddlewares(middlewares);
+    initializeApplicationRouter(routes);
 
-  start(port) {
-      this.#http.listen(port, () => {
-          console.log(`Server started` + port);
-      })
-  }
-}
+    return {
+        listen: (port) => {
+            app.listen(port, async () =>
+                console.log(`application started on port : ${port}`)
+            );
+        },
+    };
+};
+
 export default Server;

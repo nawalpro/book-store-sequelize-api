@@ -1,34 +1,40 @@
 import ApiError from "../../helpers/ApiError";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User from "./model";
-class UserController {
-    #models;
-    constructor(models) {
-        this.#models = models;
+
+const UserController = {
+  register: async (req, res, next) => {
+    try {
+      console.log("ca marche BODY", req.body);
+
+      const { first_name, last_name, email, password } = req.body;
+      const user = await User.create({
+        first_name,
+        last_name,
+        email,
+        password,
+      });
+
+      console.log("USER", user);
+
+      res.status(201).json("youpi");
+    } catch (err) {
+      console.log("ERROOR REGISTER", err);
+      next();
     }
-    
-    register = async (req, res, next) => {
-        try {
-            const user = await User.create({ ...req.body });
-            res.status(201).json(user);
-        } catch (err) {
-            next(err);
-        }
-    }
+  },
 
+  getAll: async (req, res, next) => {
+      try {
+          const users = await User.findAll({});
+          console.log("USERSSS", users);
+          res.status(201).json(users);
 
-    // login = async (req, res, next) => {
-    //     try {
-    //         // const newUser = await this.#models.User.findOne()
-    //         if (true)
-    //             throw new ApiError('error message', 403);
-            
-    //         res.status(200).json('youpi');
-
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // }
-}
-
+      } catch (error) {
+          console.error("Erroor GETALL", error);
+      }
+  },
+};
 
 export default UserController;
