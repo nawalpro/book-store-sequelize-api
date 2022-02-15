@@ -1,40 +1,39 @@
-import ApiError from "../../helpers/ApiError";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import User from "./model";
+class UserController {
 
-const UserController = {
-  register: async (req, res, next) => {
-    try {
-      console.log("ca marche BODY", req.body);
+  constructor(userService, jwtService) {
+      this.userService = userService;
+      this.jwtService = jwtService;
+  }
 
-      const { first_name, last_name, email, password } = req.body;
-      const user = await User.create({
-        first_name,
-        last_name,
-        email,
-        password,
-      });
-
-      console.log("USER", user);
-
-      res.status(201).json("youpi");
-    } catch (err) {
-      console.log("ERROOR REGISTER", err);
-      next();
-    }
-  },
-
-  getAll: async (req, res, next) => {
+  getAll = async ({res, next}) => {
       try {
-          const users = await User.findAll({});
-          console.log("USERSSS", users);
-          res.status(201).json(users);
-
-      } catch (error) {
-          console.error("Erroor GETALL", error);
+          let users = await this.userService.getAll();
+          res.status(200).json(users);
+      } catch (err) {
+          next(err);
       }
-  },
-};
+  }
+
+  register = async (req, res, next) => {
+      try {
+          const user = await this.userService.register({...req.body});
+          res.status(201).json(user);
+      }
+      catch (err) {
+          next(err);
+      }
+  }
+
+  login = async (req, res, next) => {
+      try {
+          const user = await this.userService.login({...req.body});
+          const token = await this.jwtService.generateToken({ id: user.id });
+          res.cookie('auth-cookie', token, {expiresIn: '30d'});
+          res.status(200).json(user);
+      } catch (err) {
+          next(err);
+      }
+  }
+}
 
 export default UserController;

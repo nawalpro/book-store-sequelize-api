@@ -1,28 +1,35 @@
-import { handleError } from '../helpers/ApiError';
+import { handleError } from '../helpers/error';
 
-const Server = (http, middlewares, routes) => {
-    const app = http();
-    const initializeMiddlewares = (middlewares) => {
+class Server {
+    constructor(http, middlewares, routes) {
+        this.app = http;
+        this.initializeMiddlewares(middlewares);
+        this.initializeRouter(routes);
+        this.initializeErrorHandler();
+    }
+    initializeMiddlewares = (middlewares) => {
         for (const key in middlewares) {
-            const mware = middlewares[key];
-            app.use(mware);
+            if (key === 'csrf') {
+                this.app.get('/csrf', middlewares[key], (req, res) => {
+                    res.status(200).json(req.csrfToken());
+                })
+            }
+            else
+                 this.app.use(middlewares[key]);
         }
-    };
-    const initializeApplicationRouter = (routes) => {
-        app.use(routes);
-        // app.use(handleError);
-    };
-
-    initializeMiddlewares(middlewares);
-    initializeApplicationRouter(routes);
-
-    return {
-        listen: (port) => {
-            app.listen(port, async () =>
-                console.log(`application started on port : ${port}`)
-            );
-        },
-    };
-};
+    }
+    initializeRouter(routes) {
+        for (let path in routes) {
+            this.app.use(path, routes[path]);
+        }
+    }
+    initializeErrorHandler() {
+        this.app.use(handleError);
+    }
+    
+    listen(port) {
+            this.app.listen(port, async () => console.log(`application started on port : ${port}`));
+    }
+}
 
 export default Server;

@@ -1,9 +1,12 @@
-import router from "./router";
-import BookController from "./controller";
-import Book from "./model";
+import BookDao from './dao';
+import BookRepository from './repository';
+import BookService from './service';
+import BookController from './controller';
+import BookRouter from './router';
 
-const models = { Book };
-const controller = new BookController(models);
-const routes = router(controller);
+const bookRepository = new BookRepository(BookDao);
+const bookService = new BookService(bookRepository);
+const bookController = new BookController(bookService);
+const bookRouter = new BookRouter(bookController);
 
-export default routes;
+export {bookRouter, BookDao};

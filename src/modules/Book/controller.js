@@ -1,23 +1,28 @@
-import ApiError from "../../helpers/ApiError";
+import ApiError from "../../helpers/error";
 
 class BookController {
-    #models;
-    constructor(models) {
-        this.#models = models;
+
+    constructor(bookService) {
+        this.bookService = bookService;
+    }
+    getAll = async ({res, next}) => {
+        try {
+            let books = await this.bookService.getAll();
+            res.status(200).json(books);
+        } catch (err) {
+            next(err);
+        }
     }
 
-    // login = async (req, res, next) => {
-    //     try {
-    //         // const newBook = await this.#models.Book.findOne()
-    //         if (true)
-    //             throw new ApiError('error message', 403);
-            
-    //         res.status(200).json('youpi');
-
-    //     } catch (error) {
-    //         next(error);
-    //     }
-    // }
+    add = async (req, res, next) => {
+        try {
+            const book = await this.bookService.add({...req.body});
+            res.status(201).json(book);
+        }
+        catch (err) {
+            next(err);
+        }
+    }
 }
 
 
