@@ -1,9 +1,9 @@
 import express from 'express';
-import Server from './src/config/server';
-import config from './src/config/env';
-import middlewares from './src/middlewares';
-import routes from './src/modules';
-import db from './src/config/database';
+import Server from './config/server';
+import config from './config/env';
+import middlewares from './middlewares';
+import routes from './modules';
+import db from './config/database';
 
 const http = express();
 const application  = new Server(http, routes, middlewares);
