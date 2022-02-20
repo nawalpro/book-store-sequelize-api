@@ -1,8 +1,8 @@
 import express from 'express';
+import routes from './modules';
+import middlewares from './middlewares';
 import Server from './config/server';
 import config from './config/env';
-import middlewares from './middlewares';
-import routes from './modules';
 import db from './config/database';
 
 const http = express();
